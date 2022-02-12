@@ -1,10 +1,14 @@
 # Objective: 
+
+
 	My goal with this project is to create a framework for a home automation system which can be expanded in 
 any direction. 
 For example, if you want your home automation system to interact with any script you write, this should be possible. This would 
 allow for easy creation and implementation of home automation devices. 
 
 ## Functionality: 
+
+
 	This project requires video and audio feed for [ Speaker recognition , Speech detection , command recognition , Action detection 
 , Position classification ]  
 The base functionality is what will be used to expand with. For example: using `Position Classification` and your own thermometer in each room, you could alter the 
@@ -12,6 +16,8 @@ thermostat to raise or lower the temperature in the room that you are in automat
 Perhaps this would be useful for trying to keep little ones out of the chemical cabinet. The possibilities are endless.
 
 ## Implementation: 
+
+
 	Implementation should be simple and straight forward, I think the path I will be going down 
 is as follows: 
 The main program will constantly be monitoring the house, and when the system detects and action, phrase, ect, it logs it somewhere. In order to interface with the system there will be one main program monitoring the logs, and acting based on the changes.
