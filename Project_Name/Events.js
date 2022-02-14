@@ -2,7 +2,7 @@ import * as fs from "fs";
 import fetch from "node-fetch";
 import axios from "axios";
 class Event{
-    constructor({ENDPOINT=null,POLLING_RATE=-1,DATA_ENDPOINT={type:'url',value:null},condition=null, OUTPUT_FILE='./Event_logs.txt'}={}){
+    constructor({ENDPOINT=null,POLLING_RATE=-1,DATA_ENDPOINT={type:'url',value:null},condition=null, OUTPUT_FILE='./Event_logs.txt'}={},event_type='standard'){
         // ENDPOINT: API enpoint to send POST data to, if null don't log or do anything
         // CONDITION: condition to be met using the response of the endpoint to determine whether or not the EVENT is triggered in the logs, if(null) always log
         // POLLING_RATE: how often the program should poll any device, if(-1) poll each time through loop: 
@@ -12,7 +12,7 @@ class Event{
         this.DATA_ENDPOINT = DATA_ENDPOINT; // data endpoint is an object : {type:url/data,value:data}
         this.CONDITION = condition; 
         this.OUTPUT_FILE = OUTPUT_FILE; 
-        this.type = 'standard'; 
+        this.event_type = event_type; 
         this.count = 0; 
     }
     async poll(){
@@ -22,7 +22,7 @@ class Event{
 
     log(str){
         try{
-            fs.writeFileSync(this.OUTPUT_FILE,str); 
+            fs.appendFileSync(this.OUTPUT_FILE,"\n"+str); 
         }catch(err){
             console.error(err); 
         }
