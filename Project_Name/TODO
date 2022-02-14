@@ -1,0 +1,9 @@
+Events.js:
+    [X] Finish API endpoint options 
+        [X] Can use the response from the initial API call as the body or the params for the second api call. 
+    [X] Custom Event functions 
+        [X] the user can implement their own get,post,poll and helpper functions. 
+    [] User Interface   
+        [] user can implement their own events through the UI 
+
+    

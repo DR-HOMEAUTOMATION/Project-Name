@@ -1,46 +1,51 @@
-import * as fs from "fs"; 
-import fetch from "node-fetch";
-import axios from "axios";
+import * as fs from 'fs'
+import axios from 'axios';
 class Event{
-    constructor({ENDPOINT=null,POLLING_RATE=-1,DATA_ENDPOINT={type:'url',value:null},condition=null, OUTPUT_FILE='./Event_logs.txt'}={},event_type='standard'){
-        // ENDPOINT: API enpoint to send POST data to, if null don't log or do anything
-        // CONDITION: condition to be met using the response of the endpoint to determine whether or not the EVENT is triggered in the logs, if(null) always log
-        // POLLING_RATE: how often the program should poll any device, if(-1) poll each time through loop: 
-        // POST: data to send to the `endpoint` this would be something like the camera inputs, this will also be an endpoint, if(null) do nothing
-        this.ENDPOINT = ENDPOINT; 
-        this.POLLING_RATE = POLLING_RATE; 
-        this.DATA_ENDPOINT = DATA_ENDPOINT; // data endpoint is an object : {type:url/data,value:data}
-        this.CONDITION = condition; 
-        this.OUTPUT_FILE = OUTPUT_FILE; 
-        this.event_type = event_type; 
-        this.count = 0; 
-    }
-    async poll(){
-        console.log(this.DATA_ENDPOINT); 
-        get(this.DATA_ENDPOINT.value, (val)=>post(val,'rand',(data)=>this.log(data))); 
-    }
-
-    log(str){
-        try{
-            fs.appendFileSync(this.OUTPUT_FILE,"\n"+str); 
-        }catch(err){
-            console.error(err); 
-        }
+    constructor
+    (
+        {EVENT_TYPE='STANDARD',
+        ENDPOINT=null,
+        POST_TYPE_BODY=true,
+        POLLING_RATE=-1,
+        DATA_ENDPOINT=null,
+        CONDITION=null,
+        OUTPUT_FILE='./Event_logs.txt',
+    }={},
+        {
+            POLL=async function(){
+                // get -> post -> log
+                if(this.POLLING_RATE - this.count <= 0 && ENDPOINT && DATA_ENDPOINT ){
+                    const GETURL = this.DATA_ENDPOINT
+                    const POSTURL = this.ENDPOINT
+                    await this.GET(GETURL,POSTURL,(out)=>this.POST(this.ENDPOINT,out,(data)=>this.LOG(this.OUTPUT_FILE,JSON.stringify(data,null,4))));
+                }else{
+                    this.count++; 
+                }
+            }, 
+            GET=async function(GETURL,POSTURL,callback){
+               await axios.get(GETURL).then(val=>callback(JSON.stringify(val.data,null,4)))
+            },
+            POST=async function(POSTURL,PAYLOAD,callback){
+                this.POST_TYPE_BODY ? await axios.post(POSTURL,PAYLOAD).then(val=>callback(val.data)):
+                await axios.post(POSTURL + PAYLOAD).then(val=>callback(val.data))
+                
+            },
+            LOG=function(file,val){fs.appendFileSync(file,`Event:${this.EVENT_TYPE}, Respone:${val}`)}
+        }={}
+    ){
+        this.EVENT_TYPE = EVENT_TYPE
+        this.ENDPOINT = ENDPOINT
+        this.POST_TYPE_BODY = POST_TYPE_BODY
+        this.POLLING_RATE = POLLING_RATE
+        this.DATA_ENDPOINT = DATA_ENDPOINT
+        this.CONDITION = CONDITION
+        this.OUTPUT_FILE = OUTPUT_FILE
+        this.POLL = POLL
+        this.GET = GET
+        this.POST = POST
+        this.LOG = LOG
+        this.count = 0
     }
 }
 
-
-const get = async(url , callback)=>{
-    axios.get(url).then(val=>callback(val.data)); 
-}
-
-const post = async(response, url, callback)=>{
-    callback(JSON.stringify(response,null,4))
-}
-
-const gitEvent = new Event({
-    ENDPOINT:'',
-    DATA_ENDPOINT:{type:'url',value:'https://api.github.com/users/DawsonReschke'},
-    condition: function(val){return true}
-})
-gitEvent.poll(); 
+module.exports = Event;
