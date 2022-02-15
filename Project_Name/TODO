@@ -3,9 +3,9 @@ Events.js: Events are basically polling functions detecting the truthfullness of
         [X] Can use the response from the initial API call as the body or the params for the second api call. 
     [X] Custom Event functions 
         [X] the user can implement their own get,post,poll and helpper functions. 
-    [ ] Write JSON data to the specified file
+    [X] Write JSON data to the specified file
 Event_Handlers.js: Event Handlers look through the specified file for events of a specified type, then execute some function with the response and date
-    []  Implement functionality for reading the specified file, 
-
+    [X] Allow for custom scripts / files to be executed once an event is triggered 
+    [X] Allow for conditional propigation prevention
 
     
