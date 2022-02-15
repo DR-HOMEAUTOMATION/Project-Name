@@ -1,0 +1,10 @@
+{
+    "EVENT_HANDLERS":[
+        {
+            "EVENT_TYPE":"standard",
+            "PREVENT_PROP":false,
+            "CONDITION":{"function":{"args":"a","body":"return a"}},
+            "SCRIPT":{"function":{"args":"a","body":"console.log(`Event Detected: ${a}`"}}
+        }
+    ]
+}

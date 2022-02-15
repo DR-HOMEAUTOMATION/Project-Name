@@ -1,0 +1,9 @@
+{
+    "EVENTS":[
+        {
+        "POLLING_RATE":-1,"ENDPOINT":"https://reqres.in/api/users",
+        "DATA_ENDPOINT":"https://reqres.in/api/users",
+        "OUTPUT_FILE":"C://Users//dawso//workspace//homeAuto//Project-Name//Project_Name//Event_logs.json"
+        }
+    ]
+}

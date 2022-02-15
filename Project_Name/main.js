@@ -1,26 +1,45 @@
 import Event from "./event_modules/Events.js";
 import Event_Handler from "./event_modules/Event_Handlers.js";
 import * as fs from 'fs'
-const STANDARD_EVENT_HANDLER = new Event_Handler({EVENT_TYPE:'STANDARD',SCRIPT:(data)=>'a'})
-const STANDARD_EVENT = new Event({POLLING_RATE:1000,ENDPOINT:'https://reqres.in/api/users',DATA_ENDPOINT:'https://reqres.in/api/users',OUTPUT_FILE:'C://Users//dawso//workspace//homeAuto//Project-Name//Project_Name//Event_logs.json'})
-const EVENT_HANDLERS = [STANDARD_EVENT_HANDLER]; 
-const EVENTS = [STANDARD_EVENT,{...STANDARD_EVENT},{...STANDARD_EVENT},{...STANDARD_EVENT},{...STANDARD_EVENT}]
-function main() {
-        setInterval(readFile,5000); 
-        /*
-            BUG:
-                The time between queries is inconsistant even with a specified delay period, this probably has to do with the async nature of the function within 
-                `setInterval` (2). I will investigate a solution.
-        */
-            setInterval(async ()=>{ 
-                for(let i of EVENTS){
-                    await i.POLL(); 
-                }
-            },1);
+let EVENTS , EVENT_HANDLERS;
+let ENV = new Event({
+    "POLLING_RATE":5000,"ENDPOINT":"https://reqres.in/api/users",
+    "DATA_ENDPOINT":"https://reqres.in/api/users",
+    "OUTPUT_FILE":"C://Users//dawso//workspace//homeAuto//Project-Name//Project_Name//Event_logs.json"
+    })
+async function main() {
+    let POLL_TIMER,EVENT_HANDLER_TIMER; 
+    POLL_TIMER = EVENT_HANDLER_TIMER = performance.now(); 
+        while(1){
+            let now = performance.now(); 
+            if(now - POLL_TIMER >= 1){POLL_TIMER = now; await POLL_EVENTS(EVENTS)}
+            if(now - EVENT_HANDLER_TIMER >= 5000){EVENT_HANDLER_TIMER = now;HANDLE_EVENTS()} 
+        }
 }
 
 
-function readFile(){ // Check if EVENTS exist if so, deal with them, then create Events 
+function GetEventList(file){
+    let JSON_DATA = fs.readFileSync(file); 
+    let {EVENTS} = JSON.parse(JSON_DATA);
+    EVENTS = EVENTS.map(event=>new Event(event)); 
+    return EVENTS; 
+}
+function GetEventHandlerList(file){
+    let JSON_DATA = fs.readFileSync(file); 
+    let {EVENT_HANDLERS} = JSON.parse(JSON_DATA);
+    return EVENT_HANDLERS; 
+}
+
+// POLL each event by calling EVENT.POLL(), see './event_modules/Events.js' for more information 
+async function POLL_EVENTS(EVENT_LIST){
+    for(let i of EVENT_LIST){
+        await i.POLL(); 
+    }
+}
+
+
+// CHECK if events exist, if so handle them using the array of event handlers. 
+function HANDLE_EVENTS(){
     const data = fs.readFileSync('./Event_logs.json')
     let EVENTS_DATA = []; 
     if(data.length > 0){
@@ -36,4 +55,10 @@ function readFile(){ // Check if EVENTS exist if so, deal with them, then create
         }
     } 
 }
-main(); 
+
+// main();
+const DataPath = 'C://Users//dawso//workspace//homeAuto//Project-Name//Project_Name//event_modules//public//'
+EVENTS = GetEventList(DataPath + 'Events.json')
+EVENT_HANDLERS = GetEventHandlerList(DataPath + 'Event_Handlers.json')
+console.log(EVENTS)
+console.log(EVENT_HANDLERS)
