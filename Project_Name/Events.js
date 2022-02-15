@@ -9,7 +9,7 @@ class Event{
         POLLING_RATE=-1,
         DATA_ENDPOINT=null,
         CONDITION=null,
-        OUTPUT_FILE='./Event_logs.txt',
+        OUTPUT_FILE='./Event_logs.json',
     }={},
         {
             POLL=async function(){
@@ -23,14 +23,16 @@ class Event{
                 }
             }, 
             GET=async function(GETURL,POSTURL,callback){
-               await axios.get(GETURL).then(val=>callback(JSON.stringify(val.data,null,4)))
+               await axios.get(GETURL).then(val=>callback(GETPARSER(val)))
             },
             POST=async function(POSTURL,PAYLOAD,callback){
-                this.POST_TYPE_BODY ? await axios.post(POSTURL,PAYLOAD).then(val=>callback(val.data)):
-                await axios.post(POSTURL + PAYLOAD).then(val=>callback(val.data))
+                this.POST_TYPE_BODY ? await axios.post(POSTURL,PAYLOAD).then(val=>callback(POSTPARSER(val))):
+                await axios.post(POSTURL + PAYLOAD).then(val=>callback(POSTPARSER(val)))
                 
             },
-            LOG=function(file,val){fs.appendFileSync(file,`Event:${this.EVENT_TYPE}, Respone:${val}`)}
+            GETPARSER=(data)=>JSON.stringify(data.data),
+            POSTPARSER=(data)=>JSON.stringify(data.data),
+            LOG=function(file,val){fs.appendFileSync(file,JSON.stringify({Event:this.EVENT_TYPE,response:val},null,4)+',')}
         }={}
     ){
         this.EVENT_TYPE = EVENT_TYPE
@@ -48,4 +50,9 @@ class Event{
     }
 }
 
-module.exports = Event;
+let tempE = new Event({
+    ENDPOINT:'https://reqres.in/api/users',
+    DATA_ENDPOINT:'https://reqres.in/api/users',
+})
+
+tempE.POLL(); 
