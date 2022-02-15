@@ -1,7 +1,7 @@
 import Event from "./event_modules/Events.js";
 import Event_Handler from "./event_modules/Event_Handlers.js";
 import * as fs from 'fs'
-const STANDARD_EVENT_HANDLER = new Event_Handler({EVENT_TYPE:'STANDARD',SCRIPT:(data)=>console.log(`Event Triggered!`)})
+const STANDARD_EVENT_HANDLER = new Event_Handler({EVENT_TYPE:'STANDARD',SCRIPT:(data)=>'a'})
 const STANDARD_EVENT = new Event({POLLING_RATE:1000,ENDPOINT:'https://reqres.in/api/users',DATA_ENDPOINT:'https://reqres.in/api/users',OUTPUT_FILE:'C://Users//dawso//workspace//homeAuto//Project-Name//Project_Name//Event_logs.json'})
 const EVENT_HANDLERS = [STANDARD_EVENT_HANDLER]; 
 const EVENTS = [STANDARD_EVENT,{...STANDARD_EVENT},{...STANDARD_EVENT},{...STANDARD_EVENT},{...STANDARD_EVENT}]
@@ -14,7 +14,7 @@ function main() {
         */
             setInterval(async ()=>{ 
                 for(let i of EVENTS){
-                    i.POLL(); 
+                    await i.POLL(); 
                 }
             },1);
 }

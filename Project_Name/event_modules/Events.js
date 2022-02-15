@@ -20,7 +20,6 @@ class Event{
                     this.count = 0; 
                     await this.GET(GETURL,POSTURL,(out)=>this.POST(this.ENDPOINT,out,(data)=>this.LOG(this.OUTPUT_FILE,JSON.stringify(data,null,4))));
                 }else{
-                    console.log(this.count); 
                     this.count++; 
                 }
             }, 
