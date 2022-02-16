@@ -1,13 +1,10 @@
 import Event from "./event_modules/Events.js";
 import Event_Handler from "./event_modules/Event_Handlers.js";
+import {convertJsonToJs , convertJsToJson} from "./event_modules/Conver_JSON_Object.js"
 import * as fs from 'fs'
 let EVENTS , EVENT_HANDLERS;
-let ENV = new Event({
-    "POLLING_RATE":5000,"ENDPOINT":"https://reqres.in/api/users",
-    "DATA_ENDPOINT":"https://reqres.in/api/users",
-    "OUTPUT_FILE":"C://Users//dawso//workspace//homeAuto//Project-Name//Project_Name//Event_logs.json"
-    })
 async function main() {
+    console.log("\x1b[33m",`EVENTS length: ${EVENTS.length}, \n EVENT_HANDLERS length: ${EVENT_HANDLERS.length}`)
     let POLL_TIMER,EVENT_HANDLER_TIMER; 
     POLL_TIMER = EVENT_HANDLER_TIMER = performance.now(); 
         while(1){
@@ -21,12 +18,15 @@ async function main() {
 function GetEventList(file){
     let JSON_DATA = fs.readFileSync(file); 
     let {EVENTS} = JSON.parse(JSON_DATA);
+    EVENTS = EVENTS.map(val => convertJsonToJs(val));
     EVENTS = EVENTS.map(event=>new Event(event)); 
     return EVENTS; 
 }
 function GetEventHandlerList(file){
     let JSON_DATA = fs.readFileSync(file); 
     let {EVENT_HANDLERS} = JSON.parse(JSON_DATA);
+    EVENT_HANDLERS = EVENT_HANDLERS.map(val=>convertJsonToJs(val)); 
+    EVENT_HANDLERS = EVENT_HANDLERS.map(val=> new Event_Handler(val)); 
     return EVENT_HANDLERS; 
 }
 
@@ -40,6 +40,7 @@ async function POLL_EVENTS(EVENT_LIST){
 
 // CHECK if events exist, if so handle them using the array of event handlers. 
 function HANDLE_EVENTS(){
+    console.log("handling events now")
     const data = fs.readFileSync('./Event_logs.json')
     let EVENTS_DATA = []; 
     if(data.length > 0){
@@ -56,9 +57,10 @@ function HANDLE_EVENTS(){
     } 
 }
 
-// main();
+
 const DataPath = 'C://Users//dawso//workspace//homeAuto//Project-Name//Project_Name//event_modules//public//'
 EVENTS = GetEventList(DataPath + 'Events.json')
 EVENT_HANDLERS = GetEventHandlerList(DataPath + 'Event_Handlers.json')
-console.log(EVENTS)
-console.log(EVENT_HANDLERS)
+
+main();
+

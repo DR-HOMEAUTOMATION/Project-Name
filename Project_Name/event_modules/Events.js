@@ -8,11 +8,13 @@ class Event{
         POST_TYPE_BODY=true,
         POLLING_RATE=-1,
         DATA_ENDPOINT=null,
-        CONDITION=null,
         OUTPUT_FILE='./Event_logs.json',
+        CONDITION = function (val){return true},
         POLL=async function(){
             // get -> post -> log
             if(this.POLLING_RATE - this.count <= 0 && ENDPOINT && DATA_ENDPOINT ){
+                
+                console.log('')
                 const GETURL = this.DATA_ENDPOINT
                 const POSTURL = this.ENDPOINT
                 this.count = 0; 
@@ -22,7 +24,7 @@ class Event{
             }
         }, 
         GET=async function(GETURL,POSTURL,callback){
-           await axios.get(GETURL).then(val=>callback(GETPARSER(val)))
+           await axios.get(GETURL).then(val=>callback(POSTURL,GETPARSER(val),(data)=>this.LOG(this.OUTPUT_FILE,data)))
         },
         POST=async function(POSTURL,PAYLOAD,callback){
             console.log("\x1b[31m",PAYLOAD)
@@ -33,14 +35,16 @@ class Event{
         GETPARSER=(data)=>JSON.stringify(data.data),
         POSTPARSER=(data)=>JSON.stringify(data.data),
         LOG=function(file,val){
-            let file_data = fs.readFileSync(this.OUTPUT_FILE,'utf-8')
-            let arr = []; 
-            if(file_data.length > 0){
-                let {EVENTS} = JSON.parse(file_data) 
-                arr = EVENTS; 
+            if(this.CONDITION(val)){
+                let file_data = fs.readFileSync(this.OUTPUT_FILE,'utf-8')
+                let arr = []; 
+                if(file_data.length > 0){
+                    let {EVENTS} = JSON.parse(file_data) 
+                    arr = EVENTS; 
+                }
+                arr.push({Event:this.EVENT_TYPE,response:val})
+                fs.writeFileSync(file,`{"EVENTS":${JSON.stringify(arr,null,4)}}`)
             }
-            arr.push({Event:this.EVENT_TYPE,response:val})
-            fs.writeFileSync(file,`{"EVENTS":${JSON.stringify(arr,null,4)}}`)
         }
     }={}
     ){
