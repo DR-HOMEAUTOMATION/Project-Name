@@ -1,0 +1,14 @@
+{
+    "EVENTS":[
+        {
+        "EVENT_TYPE":"TEST",
+        "POLLING_RATE":-1
+        },
+        {
+            "EVENT_TYPE":"standard",
+            "POLLING_RATE":1000,
+            "ENDPOINT":"https://reqres.in/api/users",
+            "DATA_ENDPOINT":"https://reqres.in/api/users"
+        }
+    ]
+}
