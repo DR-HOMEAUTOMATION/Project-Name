@@ -1,11 +1,2 @@
-Events.js: Events are basically polling functions detecting the truthfullness of condtion(x,y) | x = get(APIx) y = POST(APIy,x) 
-    [X] Finish API endpoint options 
-        [X] Can use the response from the initial API call as the body or the params for the second api call. 
-    [X] Custom Event functions 
-        [X] the user can implement their own get,post,poll and helpper functions. 
-    [X] Write JSON data to the specified file
-Event_Handlers.js: Event Handlers look through the specified file for events of a specified type, then execute some function with the response and date
-    [X] Allow for custom scripts / files to be executed once an event is triggered 
-    [X] Allow for conditional propigation prevention
-
-    
+User Interface: 
+    [] create an online sort of IDE for the user to create Events and Handlers

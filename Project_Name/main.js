@@ -2,9 +2,11 @@ import Event from "./event_modules/Events.js";
 import Event_Handler from "./event_modules/Event_Handlers.js";
 import {convertJsonToJs , convertJsToJson} from "./event_modules/Conver_JSON_Object.js"
 import * as fs from 'fs'
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const PATHS = require('./paths.json');
 let EVENTS , EVENT_HANDLERS;
 async function main() {
-    console.log("\x1b[33m",`EVENTS length: ${EVENTS.length}, \n EVENT_HANDLERS length: ${EVENT_HANDLERS.length}`)
     let POLL_TIMER,EVENT_HANDLER_TIMER; 
     POLL_TIMER = EVENT_HANDLER_TIMER = performance.now(); 
         while(1){
@@ -40,13 +42,13 @@ async function POLL_EVENTS(EVENT_LIST){
 
 // CHECK if events exist, if so handle them using the array of event handlers. 
 function HANDLE_EVENTS(){
-    console.log("handling events now")
-    const data = fs.readFileSync('./Event_logs.json')
+    console.log('\x1b[0m',"handling events now")
+    const data = fs.readFileSync(PATHS.EVENT_LOGS)
     let EVENTS_DATA = []; 
     if(data.length > 0){
         EVENTS_DATA = JSON.parse(data).EVENTS
     }
-    fs.writeFileSync('./Event_logs.json',''); 
+    fs.writeFileSync(PATHS.EVENT_LOGS,''); 
     for(let i of EVENTS_DATA){
         for(let j of EVENT_HANDLERS){
             if(i.Event == j.EVENT_TYPE){
@@ -56,11 +58,7 @@ function HANDLE_EVENTS(){
         }
     } 
 }
-
-
-const DataPath = 'C://Users//dawso//workspace//homeAuto//Project-Name//Project_Name//event_modules//public//'
-EVENTS = GetEventList(DataPath + 'Events.json')
-EVENT_HANDLERS = GetEventHandlerList(DataPath + 'Event_Handlers.json')
-
+EVENTS = GetEventList(PATHS.EVENTS)
+EVENT_HANDLERS = GetEventHandlerList(PATHS.EVENT_HANDLERS)
 main();
 

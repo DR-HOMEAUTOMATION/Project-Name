@@ -1,0 +1,5 @@
+{
+    "EVENTS":"..//public//Events.json",
+    "EVENT_HANDLERS":"..//public//Event_Handlers.json",
+    "EVENT_LOGS":"..//public//Event_logs.json"
+}
