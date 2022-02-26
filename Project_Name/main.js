@@ -1,6 +1,6 @@
 import Event from "./event_modules/Events.js";
 import Event_Handler from "./event_modules/Event_Handlers.js";
-import {convertJsonToJs , convertJsToJson} from "./event_modules/Conver_JSON_Object.js"
+import {convertJsonToJs , convertJsToJson} from "./event_modules/Convert_JSON_Object.js"
 import * as fs from 'fs'
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
@@ -58,7 +58,43 @@ function HANDLE_EVENTS(){
         }
     } 
 }
+
+// creates a new event and adds it to the 
+function createEventAt(file,event){
+    let file_data = fs.readFileSync(file,'utf-8')
+    let arr = []; 
+    if(file_data.length > 0){
+        let {EVENTS} = JSON.parse(file_data) 
+        arr = EVENTS; 
+    }
+    arr.unshift(convertJsToJson(event))
+    fs.writeFileSync(file,`{"EVENTS":${JSON.stringify(arr,null,4)}}`)
+}
+
+//test Event & event handlers | the default `standard` evt_handler works fine
+createEventAt(PATHS.EVENTS,new Event({
+    ENDPOINT: "https://reqres.in/api/users",
+    DATA_ENDPOINT: "https://reqres.in/api/users",
+    POLLING_RATE:5000,
+    POST_TYPE_BODY:true,
+    GETPARSER: (res)=>{
+        return res.data.data[0]
+    },
+    POSTPARSER:(res)=>{
+        return res.data
+    }
+}))
+
 EVENTS = GetEventList(PATHS.EVENTS)
 EVENT_HANDLERS = GetEventHandlerList(PATHS.EVENT_HANDLERS)
 main();
 
+
+
+/*
+    Home auto ex:
+        camera endpoint : https://localhost:6969 | when you make a get request to this endpoint it returns an image ->
+        facial recognition endpoint : https://localhost:1420 | when you make a post request, returns the value of the image recognition algo (persons name or something) ->
+        Event:FR,response:dawson,date:10-10-10 || 
+        call a new script and pass in these values 
+*/
