@@ -1,3 +1,5 @@
+import { createRequire } from "module";
+
 const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
 const parseFunctionParams = (f) => f.toString().split('(')[1].split(')')[0].split(',')
 const parseFunctionBody = (f) => f.toString().substring(f.toString().indexOf('{')+1,f.toString().lastIndexOf('}'))
@@ -17,7 +19,8 @@ function convertJsonToJs(obj){
                     let parseFunction = i[1].function.isAsync ? new AsyncFunction(...i[1].function.args,i[1].function.body) : new Function(i[1].function.args,i[1].function.body)
                     temp[i[0]] = parseFunction
                 }else{
-                    console.log("something went wrong");
+                    console.log("something went wrong at:");
+                    console.log(JSON.stringify(i,null,4))
                 }
             }else{
                 temp[i[0]] = i[1]
@@ -25,6 +28,7 @@ function convertJsonToJs(obj){
         }
     }catch(err){
         console.log(`JSON file format ERROR : ${err}`)
+        console.log(`error at Object: ${JSON.stringify(i,null,4)}`)
     }
 
    }
