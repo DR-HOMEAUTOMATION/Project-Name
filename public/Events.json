@@ -97,6 +97,871 @@
             "promises": {}
         },
         "EVENT_TYPE": "standard",
+        "ENDPOINT": "https://reqres.in/api/users",
+        "POST_TYPE_BODY": true,
+        "POLLING_RATE": 5000,
+        "DATA_ENDPOINT": "https://reqres.in/api/users",
+        "CONDITION": {
+            "function": {
+                "args": [
+                    "val"
+                ],
+                "body": "return true",
+                "isAsync": false
+            }
+        },
+        "OUTPUT_FILE": "..//public//Event_logs.json",
+        "POLL": {
+            "function": {
+                "args": [
+                    ""
+                ],
+                "body": "\r\n             // get <- post <- log\r\n            if(this.POLLING_RATE - this.count <= 0 && this.ENDPOINT && this.DATA_ENDPOINT ){\r\n                const GETURL = this.DATA_ENDPOINT\r\n                const POSTURL = this.ENDPOINT\r\n                this.count = 0; \r\n               await this.GET(GETURL,POSTURL,(out)=>this.POST(this.ENDPOINT,out,(data)=>this.LOG(this.OUTPUT_FILE,JSON.stringify(data,null,4))))\r\n            }else{\r\n                this.count++; \r\n            }\r\n        ",
+                "isAsync": true
+            }
+        },
+        "GET": {
+            "function": {
+                "args": [
+                    "GETURL",
+                    "POSTURL",
+                    "callback"
+                ],
+                "body": "\r\n           await this.axios.get(GETURL)\r\n           .then(val=>{\r\n               callback(this.GETPARSER(val))\r\n            })\r\n        ",
+                "isAsync": true
+            }
+        },
+        "POST": {
+            "function": {
+                "args": [
+                    "POSTURL",
+                    "PAYLOAD",
+                    "callback"
+                ],
+                "body": "\r\n            console.log('postURL')\r\n            console.log(POSTURL)\r\n            console.log('PAYLOAD')\r\n            console.log(PAYLOAD)\r\n            this.POST_TYPE_BODY ? await this.axios.post(POSTURL,PAYLOAD).then(val=>callback(this.POSTPARSER(val))):\r\n            await this.axios.post(POSTURL + PAYLOAD).then(val=>callback(this.POSTPARSER(val)))\r\n        ",
+                "isAsync": true
+            }
+        },
+        "LOG": {
+            "function": {
+                "args": [
+                    "file",
+                    "val"
+                ],
+                "body": "\r\n            if(this.CONDITION(val)){\r\n                console.log('logging');\r\n                console.log(val)\r\n                let file_data = this.fs.readFileSync(this.OUTPUT_FILE,'utf-8')\r\n                let arr = []; \r\n                if(file_data.length > 0){\r\n                    let {EVENTS} = JSON.parse(file_data) \r\n                    arr = EVENTS; \r\n                }\r\n                arr.push({Event:this.EVENT_TYPE,response:val,date:new Date()})\r\n                this.fs.writeFileSync(file,`{\"EVENTS\":${JSON.stringify(arr,null,4)}}`)\r\n            }\r\n        ",
+                "isAsync": false
+            }
+        },
+        "GETPARSER": {
+            "function": {
+                "args": [
+                    "res"
+                ],
+                "body": "\r\n        return res.data.data[0]\r\n    ",
+                "isAsync": false
+            }
+        },
+        "POSTPARSER": {
+            "function": {
+                "args": [
+                    "res"
+                ],
+                "body": "\r\n        return res.data\r\n    ",
+                "isAsync": false
+            }
+        },
+        "count": 0
+    },
+    {
+        "Child_Process": {
+            "default": {}
+        },
+        "axios": {
+            "function": {
+                "args": [
+                    ""
+                ],
+                "body": "\n    var args = new Array(arguments.length);\n    for (var i = 0; i < args.length; i++) {\n      args[i] = arguments[i];\n    }\n    return fn.apply(thisArg, args);\n  ",
+                "isAsync": false
+            }
+        },
+        "fs": {
+            "F_OK": 0,
+            "R_OK": 4,
+            "W_OK": 2,
+            "X_OK": 1,
+            "constants": {
+                "UV_FS_SYMLINK_DIR": 1,
+                "UV_FS_SYMLINK_JUNCTION": 2,
+                "O_RDONLY": 0,
+                "O_WRONLY": 1,
+                "O_RDWR": 2,
+                "UV_DIRENT_UNKNOWN": 0,
+                "UV_DIRENT_FILE": 1,
+                "UV_DIRENT_DIR": 2,
+                "UV_DIRENT_LINK": 3,
+                "UV_DIRENT_FIFO": 4,
+                "UV_DIRENT_SOCKET": 5,
+                "UV_DIRENT_CHAR": 6,
+                "UV_DIRENT_BLOCK": 7,
+                "S_IFMT": 61440,
+                "S_IFREG": 32768,
+                "S_IFDIR": 16384,
+                "S_IFCHR": 8192,
+                "S_IFLNK": 40960,
+                "O_CREAT": 256,
+                "O_EXCL": 1024,
+                "UV_FS_O_FILEMAP": 536870912,
+                "O_TRUNC": 512,
+                "O_APPEND": 8,
+                "F_OK": 0,
+                "R_OK": 4,
+                "W_OK": 2,
+                "X_OK": 1,
+                "UV_FS_COPYFILE_EXCL": 1,
+                "COPYFILE_EXCL": 1,
+                "UV_FS_COPYFILE_FICLONE": 2,
+                "COPYFILE_FICLONE": 2,
+                "UV_FS_COPYFILE_FICLONE_FORCE": 4,
+                "COPYFILE_FICLONE_FORCE": 4
+            },
+            "default": {
+                "F_OK": 0,
+                "R_OK": 4,
+                "W_OK": 2,
+                "X_OK": 1,
+                "constants": {
+                    "UV_FS_SYMLINK_DIR": 1,
+                    "UV_FS_SYMLINK_JUNCTION": 2,
+                    "O_RDONLY": 0,
+                    "O_WRONLY": 1,
+                    "O_RDWR": 2,
+                    "UV_DIRENT_UNKNOWN": 0,
+                    "UV_DIRENT_FILE": 1,
+                    "UV_DIRENT_DIR": 2,
+                    "UV_DIRENT_LINK": 3,
+                    "UV_DIRENT_FIFO": 4,
+                    "UV_DIRENT_SOCKET": 5,
+                    "UV_DIRENT_CHAR": 6,
+                    "UV_DIRENT_BLOCK": 7,
+                    "S_IFMT": 61440,
+                    "S_IFREG": 32768,
+                    "S_IFDIR": 16384,
+                    "S_IFCHR": 8192,
+                    "S_IFLNK": 40960,
+                    "O_CREAT": 256,
+                    "O_EXCL": 1024,
+                    "UV_FS_O_FILEMAP": 536870912,
+                    "O_TRUNC": 512,
+                    "O_APPEND": 8,
+                    "F_OK": 0,
+                    "R_OK": 4,
+                    "W_OK": 2,
+                    "X_OK": 1,
+                    "UV_FS_COPYFILE_EXCL": 1,
+                    "COPYFILE_EXCL": 1,
+                    "UV_FS_COPYFILE_FICLONE": 2,
+                    "COPYFILE_FICLONE": 2,
+                    "UV_FS_COPYFILE_FICLONE_FORCE": 4,
+                    "COPYFILE_FICLONE_FORCE": 4
+                },
+                "promises": {}
+            },
+            "promises": {}
+        },
+        "EVENT_TYPE": "standard",
+        "ENDPOINT": "https://reqres.in/api/users",
+        "POST_TYPE_BODY": true,
+        "POLLING_RATE": 5000,
+        "DATA_ENDPOINT": "https://reqres.in/api/users",
+        "CONDITION": {
+            "function": {
+                "args": [
+                    "val"
+                ],
+                "body": "return true",
+                "isAsync": false
+            }
+        },
+        "OUTPUT_FILE": "..//public//Event_logs.json",
+        "POLL": {
+            "function": {
+                "args": [
+                    ""
+                ],
+                "body": "\r\n             // get <- post <- log\r\n            if(this.POLLING_RATE - this.count <= 0 && this.ENDPOINT && this.DATA_ENDPOINT ){\r\n                const GETURL = this.DATA_ENDPOINT\r\n                const POSTURL = this.ENDPOINT\r\n                this.count = 0; \r\n               await this.GET(GETURL,POSTURL,(out)=>this.POST(this.ENDPOINT,out,(data)=>this.LOG(this.OUTPUT_FILE,JSON.stringify(data,null,4))))\r\n            }else{\r\n                this.count++; \r\n            }\r\n        ",
+                "isAsync": true
+            }
+        },
+        "GET": {
+            "function": {
+                "args": [
+                    "GETURL",
+                    "POSTURL",
+                    "callback"
+                ],
+                "body": "\r\n           await this.axios.get(GETURL)\r\n           .then(val=>{\r\n               callback(this.GETPARSER(val))\r\n            })\r\n        ",
+                "isAsync": true
+            }
+        },
+        "POST": {
+            "function": {
+                "args": [
+                    "POSTURL",
+                    "PAYLOAD",
+                    "callback"
+                ],
+                "body": "\r\n            console.log('postURL')\r\n            console.log(POSTURL)\r\n            console.log('PAYLOAD')\r\n            console.log(PAYLOAD)\r\n            this.POST_TYPE_BODY ? await this.axios.post(POSTURL,PAYLOAD).then(val=>callback(this.POSTPARSER(val))):\r\n            await this.axios.post(POSTURL + PAYLOAD).then(val=>callback(this.POSTPARSER(val)))\r\n        ",
+                "isAsync": true
+            }
+        },
+        "LOG": {
+            "function": {
+                "args": [
+                    "file",
+                    "val"
+                ],
+                "body": "\r\n            if(this.CONDITION(val)){\r\n                console.log('logging');\r\n                console.log(val)\r\n                let file_data = this.fs.readFileSync(this.OUTPUT_FILE,'utf-8')\r\n                let arr = []; \r\n                if(file_data.length > 0){\r\n                    let {EVENTS} = JSON.parse(file_data) \r\n                    arr = EVENTS; \r\n                }\r\n                arr.push({Event:this.EVENT_TYPE,response:val,date:new Date()})\r\n                this.fs.writeFileSync(file,`{\"EVENTS\":${JSON.stringify(arr,null,4)}}`)\r\n            }\r\n        ",
+                "isAsync": false
+            }
+        },
+        "GETPARSER": {
+            "function": {
+                "args": [
+                    "res"
+                ],
+                "body": "\r\n        return res.data.data[0]\r\n    ",
+                "isAsync": false
+            }
+        },
+        "POSTPARSER": {
+            "function": {
+                "args": [
+                    "res"
+                ],
+                "body": "\r\n        return res.data\r\n    ",
+                "isAsync": false
+            }
+        },
+        "count": 0
+    },
+    {
+        "Child_Process": {
+            "default": {}
+        },
+        "axios": {
+            "function": {
+                "args": [
+                    ""
+                ],
+                "body": "\n    var args = new Array(arguments.length);\n    for (var i = 0; i < args.length; i++) {\n      args[i] = arguments[i];\n    }\n    return fn.apply(thisArg, args);\n  ",
+                "isAsync": false
+            }
+        },
+        "fs": {
+            "F_OK": 0,
+            "R_OK": 4,
+            "W_OK": 2,
+            "X_OK": 1,
+            "constants": {
+                "UV_FS_SYMLINK_DIR": 1,
+                "UV_FS_SYMLINK_JUNCTION": 2,
+                "O_RDONLY": 0,
+                "O_WRONLY": 1,
+                "O_RDWR": 2,
+                "UV_DIRENT_UNKNOWN": 0,
+                "UV_DIRENT_FILE": 1,
+                "UV_DIRENT_DIR": 2,
+                "UV_DIRENT_LINK": 3,
+                "UV_DIRENT_FIFO": 4,
+                "UV_DIRENT_SOCKET": 5,
+                "UV_DIRENT_CHAR": 6,
+                "UV_DIRENT_BLOCK": 7,
+                "S_IFMT": 61440,
+                "S_IFREG": 32768,
+                "S_IFDIR": 16384,
+                "S_IFCHR": 8192,
+                "S_IFLNK": 40960,
+                "O_CREAT": 256,
+                "O_EXCL": 1024,
+                "UV_FS_O_FILEMAP": 536870912,
+                "O_TRUNC": 512,
+                "O_APPEND": 8,
+                "F_OK": 0,
+                "R_OK": 4,
+                "W_OK": 2,
+                "X_OK": 1,
+                "UV_FS_COPYFILE_EXCL": 1,
+                "COPYFILE_EXCL": 1,
+                "UV_FS_COPYFILE_FICLONE": 2,
+                "COPYFILE_FICLONE": 2,
+                "UV_FS_COPYFILE_FICLONE_FORCE": 4,
+                "COPYFILE_FICLONE_FORCE": 4
+            },
+            "default": {
+                "F_OK": 0,
+                "R_OK": 4,
+                "W_OK": 2,
+                "X_OK": 1,
+                "constants": {
+                    "UV_FS_SYMLINK_DIR": 1,
+                    "UV_FS_SYMLINK_JUNCTION": 2,
+                    "O_RDONLY": 0,
+                    "O_WRONLY": 1,
+                    "O_RDWR": 2,
+                    "UV_DIRENT_UNKNOWN": 0,
+                    "UV_DIRENT_FILE": 1,
+                    "UV_DIRENT_DIR": 2,
+                    "UV_DIRENT_LINK": 3,
+                    "UV_DIRENT_FIFO": 4,
+                    "UV_DIRENT_SOCKET": 5,
+                    "UV_DIRENT_CHAR": 6,
+                    "UV_DIRENT_BLOCK": 7,
+                    "S_IFMT": 61440,
+                    "S_IFREG": 32768,
+                    "S_IFDIR": 16384,
+                    "S_IFCHR": 8192,
+                    "S_IFLNK": 40960,
+                    "O_CREAT": 256,
+                    "O_EXCL": 1024,
+                    "UV_FS_O_FILEMAP": 536870912,
+                    "O_TRUNC": 512,
+                    "O_APPEND": 8,
+                    "F_OK": 0,
+                    "R_OK": 4,
+                    "W_OK": 2,
+                    "X_OK": 1,
+                    "UV_FS_COPYFILE_EXCL": 1,
+                    "COPYFILE_EXCL": 1,
+                    "UV_FS_COPYFILE_FICLONE": 2,
+                    "COPYFILE_FICLONE": 2,
+                    "UV_FS_COPYFILE_FICLONE_FORCE": 4,
+                    "COPYFILE_FICLONE_FORCE": 4
+                },
+                "promises": {}
+            },
+            "promises": {}
+        },
+        "EVENT_TYPE": "standard",
+        "ENDPOINT": "https://reqres.in/api/users",
+        "POST_TYPE_BODY": true,
+        "POLLING_RATE": 5000,
+        "DATA_ENDPOINT": "https://reqres.in/api/users",
+        "CONDITION": {
+            "function": {
+                "args": [
+                    "val"
+                ],
+                "body": "return true",
+                "isAsync": false
+            }
+        },
+        "OUTPUT_FILE": "..//public//Event_logs.json",
+        "POLL": {
+            "function": {
+                "args": [
+                    ""
+                ],
+                "body": "\r\n             // get <- post <- log\r\n            if(this.POLLING_RATE - this.count <= 0 && this.ENDPOINT && this.DATA_ENDPOINT ){\r\n                const GETURL = this.DATA_ENDPOINT\r\n                const POSTURL = this.ENDPOINT\r\n                this.count = 0; \r\n               await this.GET(GETURL,POSTURL,(out)=>this.POST(this.ENDPOINT,out,(data)=>this.LOG(this.OUTPUT_FILE,JSON.stringify(data,null,4))))\r\n            }else{\r\n                this.count++; \r\n            }\r\n        ",
+                "isAsync": true
+            }
+        },
+        "GET": {
+            "function": {
+                "args": [
+                    "GETURL",
+                    "POSTURL",
+                    "callback"
+                ],
+                "body": "\r\n           await this.axios.get(GETURL)\r\n           .then(val=>{\r\n               callback(this.GETPARSER(val))\r\n            })\r\n        ",
+                "isAsync": true
+            }
+        },
+        "POST": {
+            "function": {
+                "args": [
+                    "POSTURL",
+                    "PAYLOAD",
+                    "callback"
+                ],
+                "body": "\r\n            console.log('postURL')\r\n            console.log(POSTURL)\r\n            console.log('PAYLOAD')\r\n            console.log(PAYLOAD)\r\n            this.POST_TYPE_BODY ? await this.axios.post(POSTURL,PAYLOAD).then(val=>callback(this.POSTPARSER(val))):\r\n            await this.axios.post(POSTURL + PAYLOAD).then(val=>callback(this.POSTPARSER(val)))\r\n        ",
+                "isAsync": true
+            }
+        },
+        "LOG": {
+            "function": {
+                "args": [
+                    "file",
+                    "val"
+                ],
+                "body": "\r\n            if(this.CONDITION(val)){\r\n                console.log('logging');\r\n                console.log(val)\r\n                let file_data = this.fs.readFileSync(this.OUTPUT_FILE,'utf-8')\r\n                let arr = []; \r\n                if(file_data.length > 0){\r\n                    let {EVENTS} = JSON.parse(file_data) \r\n                    arr = EVENTS; \r\n                }\r\n                arr.push({Event:this.EVENT_TYPE,response:val,date:new Date()})\r\n                this.fs.writeFileSync(file,`{\"EVENTS\":${JSON.stringify(arr,null,4)}}`)\r\n            }\r\n        ",
+                "isAsync": false
+            }
+        },
+        "GETPARSER": {
+            "function": {
+                "args": [
+                    "res"
+                ],
+                "body": "\r\n        return res.data.data[0]\r\n    ",
+                "isAsync": false
+            }
+        },
+        "POSTPARSER": {
+            "function": {
+                "args": [
+                    "res"
+                ],
+                "body": "\r\n        return res.data\r\n    ",
+                "isAsync": false
+            }
+        },
+        "count": 0
+    },
+    {
+        "Child_Process": {
+            "default": {}
+        },
+        "axios": {
+            "function": {
+                "args": [
+                    ""
+                ],
+                "body": "\n    var args = new Array(arguments.length);\n    for (var i = 0; i < args.length; i++) {\n      args[i] = arguments[i];\n    }\n    return fn.apply(thisArg, args);\n  ",
+                "isAsync": false
+            }
+        },
+        "fs": {
+            "F_OK": 0,
+            "R_OK": 4,
+            "W_OK": 2,
+            "X_OK": 1,
+            "constants": {
+                "UV_FS_SYMLINK_DIR": 1,
+                "UV_FS_SYMLINK_JUNCTION": 2,
+                "O_RDONLY": 0,
+                "O_WRONLY": 1,
+                "O_RDWR": 2,
+                "UV_DIRENT_UNKNOWN": 0,
+                "UV_DIRENT_FILE": 1,
+                "UV_DIRENT_DIR": 2,
+                "UV_DIRENT_LINK": 3,
+                "UV_DIRENT_FIFO": 4,
+                "UV_DIRENT_SOCKET": 5,
+                "UV_DIRENT_CHAR": 6,
+                "UV_DIRENT_BLOCK": 7,
+                "S_IFMT": 61440,
+                "S_IFREG": 32768,
+                "S_IFDIR": 16384,
+                "S_IFCHR": 8192,
+                "S_IFLNK": 40960,
+                "O_CREAT": 256,
+                "O_EXCL": 1024,
+                "UV_FS_O_FILEMAP": 536870912,
+                "O_TRUNC": 512,
+                "O_APPEND": 8,
+                "F_OK": 0,
+                "R_OK": 4,
+                "W_OK": 2,
+                "X_OK": 1,
+                "UV_FS_COPYFILE_EXCL": 1,
+                "COPYFILE_EXCL": 1,
+                "UV_FS_COPYFILE_FICLONE": 2,
+                "COPYFILE_FICLONE": 2,
+                "UV_FS_COPYFILE_FICLONE_FORCE": 4,
+                "COPYFILE_FICLONE_FORCE": 4
+            },
+            "default": {
+                "F_OK": 0,
+                "R_OK": 4,
+                "W_OK": 2,
+                "X_OK": 1,
+                "constants": {
+                    "UV_FS_SYMLINK_DIR": 1,
+                    "UV_FS_SYMLINK_JUNCTION": 2,
+                    "O_RDONLY": 0,
+                    "O_WRONLY": 1,
+                    "O_RDWR": 2,
+                    "UV_DIRENT_UNKNOWN": 0,
+                    "UV_DIRENT_FILE": 1,
+                    "UV_DIRENT_DIR": 2,
+                    "UV_DIRENT_LINK": 3,
+                    "UV_DIRENT_FIFO": 4,
+                    "UV_DIRENT_SOCKET": 5,
+                    "UV_DIRENT_CHAR": 6,
+                    "UV_DIRENT_BLOCK": 7,
+                    "S_IFMT": 61440,
+                    "S_IFREG": 32768,
+                    "S_IFDIR": 16384,
+                    "S_IFCHR": 8192,
+                    "S_IFLNK": 40960,
+                    "O_CREAT": 256,
+                    "O_EXCL": 1024,
+                    "UV_FS_O_FILEMAP": 536870912,
+                    "O_TRUNC": 512,
+                    "O_APPEND": 8,
+                    "F_OK": 0,
+                    "R_OK": 4,
+                    "W_OK": 2,
+                    "X_OK": 1,
+                    "UV_FS_COPYFILE_EXCL": 1,
+                    "COPYFILE_EXCL": 1,
+                    "UV_FS_COPYFILE_FICLONE": 2,
+                    "COPYFILE_FICLONE": 2,
+                    "UV_FS_COPYFILE_FICLONE_FORCE": 4,
+                    "COPYFILE_FICLONE_FORCE": 4
+                },
+                "promises": {}
+            },
+            "promises": {}
+        },
+        "EVENT_TYPE": "standard",
+        "ENDPOINT": "https://reqres.in/api/users",
+        "POST_TYPE_BODY": true,
+        "POLLING_RATE": 5000,
+        "DATA_ENDPOINT": "https://reqres.in/api/users",
+        "CONDITION": {
+            "function": {
+                "args": [
+                    "val"
+                ],
+                "body": "return true",
+                "isAsync": false
+            }
+        },
+        "OUTPUT_FILE": "..//public//Event_logs.json",
+        "POLL": {
+            "function": {
+                "args": [
+                    ""
+                ],
+                "body": "\r\n             // get <- post <- log\r\n            if(this.POLLING_RATE - this.count <= 0 && this.ENDPOINT && this.DATA_ENDPOINT ){\r\n                const GETURL = this.DATA_ENDPOINT\r\n                const POSTURL = this.ENDPOINT\r\n                this.count = 0; \r\n               await this.GET(GETURL,POSTURL,(out)=>this.POST(this.ENDPOINT,out,(data)=>this.LOG(this.OUTPUT_FILE,JSON.stringify(data,null,4))))\r\n            }else{\r\n                this.count++; \r\n            }\r\n        ",
+                "isAsync": true
+            }
+        },
+        "GET": {
+            "function": {
+                "args": [
+                    "GETURL",
+                    "POSTURL",
+                    "callback"
+                ],
+                "body": "\r\n           await this.axios.get(GETURL)\r\n           .then(val=>{\r\n               callback(this.GETPARSER(val))\r\n            })\r\n        ",
+                "isAsync": true
+            }
+        },
+        "POST": {
+            "function": {
+                "args": [
+                    "POSTURL",
+                    "PAYLOAD",
+                    "callback"
+                ],
+                "body": "\r\n            console.log('postURL')\r\n            console.log(POSTURL)\r\n            console.log('PAYLOAD')\r\n            console.log(PAYLOAD)\r\n            this.POST_TYPE_BODY ? await this.axios.post(POSTURL,PAYLOAD).then(val=>callback(this.POSTPARSER(val))):\r\n            await this.axios.post(POSTURL + PAYLOAD).then(val=>callback(this.POSTPARSER(val)))\r\n        ",
+                "isAsync": true
+            }
+        },
+        "LOG": {
+            "function": {
+                "args": [
+                    "file",
+                    "val"
+                ],
+                "body": "\r\n            if(this.CONDITION(val)){\r\n                console.log('logging');\r\n                console.log(val)\r\n                let file_data = this.fs.readFileSync(this.OUTPUT_FILE,'utf-8')\r\n                let arr = []; \r\n                if(file_data.length > 0){\r\n                    let {EVENTS} = JSON.parse(file_data) \r\n                    arr = EVENTS; \r\n                }\r\n                arr.push({Event:this.EVENT_TYPE,response:val,date:new Date()})\r\n                this.fs.writeFileSync(file,`{\"EVENTS\":${JSON.stringify(arr,null,4)}}`)\r\n            }\r\n        ",
+                "isAsync": false
+            }
+        },
+        "GETPARSER": {
+            "function": {
+                "args": [
+                    "res"
+                ],
+                "body": "\r\n        return res.data.data[0]\r\n    ",
+                "isAsync": false
+            }
+        },
+        "POSTPARSER": {
+            "function": {
+                "args": [
+                    "res"
+                ],
+                "body": "\r\n        return res.data\r\n    ",
+                "isAsync": false
+            }
+        },
+        "count": 0
+    },
+    {
+        "Child_Process": {
+            "default": {}
+        },
+        "axios": {
+            "function": {
+                "args": [
+                    ""
+                ],
+                "body": "\n    var args = new Array(arguments.length);\n    for (var i = 0; i < args.length; i++) {\n      args[i] = arguments[i];\n    }\n    return fn.apply(thisArg, args);\n  ",
+                "isAsync": false
+            }
+        },
+        "fs": {
+            "F_OK": 0,
+            "R_OK": 4,
+            "W_OK": 2,
+            "X_OK": 1,
+            "constants": {
+                "UV_FS_SYMLINK_DIR": 1,
+                "UV_FS_SYMLINK_JUNCTION": 2,
+                "O_RDONLY": 0,
+                "O_WRONLY": 1,
+                "O_RDWR": 2,
+                "UV_DIRENT_UNKNOWN": 0,
+                "UV_DIRENT_FILE": 1,
+                "UV_DIRENT_DIR": 2,
+                "UV_DIRENT_LINK": 3,
+                "UV_DIRENT_FIFO": 4,
+                "UV_DIRENT_SOCKET": 5,
+                "UV_DIRENT_CHAR": 6,
+                "UV_DIRENT_BLOCK": 7,
+                "S_IFMT": 61440,
+                "S_IFREG": 32768,
+                "S_IFDIR": 16384,
+                "S_IFCHR": 8192,
+                "S_IFLNK": 40960,
+                "O_CREAT": 256,
+                "O_EXCL": 1024,
+                "UV_FS_O_FILEMAP": 536870912,
+                "O_TRUNC": 512,
+                "O_APPEND": 8,
+                "F_OK": 0,
+                "R_OK": 4,
+                "W_OK": 2,
+                "X_OK": 1,
+                "UV_FS_COPYFILE_EXCL": 1,
+                "COPYFILE_EXCL": 1,
+                "UV_FS_COPYFILE_FICLONE": 2,
+                "COPYFILE_FICLONE": 2,
+                "UV_FS_COPYFILE_FICLONE_FORCE": 4,
+                "COPYFILE_FICLONE_FORCE": 4
+            },
+            "default": {
+                "F_OK": 0,
+                "R_OK": 4,
+                "W_OK": 2,
+                "X_OK": 1,
+                "constants": {
+                    "UV_FS_SYMLINK_DIR": 1,
+                    "UV_FS_SYMLINK_JUNCTION": 2,
+                    "O_RDONLY": 0,
+                    "O_WRONLY": 1,
+                    "O_RDWR": 2,
+                    "UV_DIRENT_UNKNOWN": 0,
+                    "UV_DIRENT_FILE": 1,
+                    "UV_DIRENT_DIR": 2,
+                    "UV_DIRENT_LINK": 3,
+                    "UV_DIRENT_FIFO": 4,
+                    "UV_DIRENT_SOCKET": 5,
+                    "UV_DIRENT_CHAR": 6,
+                    "UV_DIRENT_BLOCK": 7,
+                    "S_IFMT": 61440,
+                    "S_IFREG": 32768,
+                    "S_IFDIR": 16384,
+                    "S_IFCHR": 8192,
+                    "S_IFLNK": 40960,
+                    "O_CREAT": 256,
+                    "O_EXCL": 1024,
+                    "UV_FS_O_FILEMAP": 536870912,
+                    "O_TRUNC": 512,
+                    "O_APPEND": 8,
+                    "F_OK": 0,
+                    "R_OK": 4,
+                    "W_OK": 2,
+                    "X_OK": 1,
+                    "UV_FS_COPYFILE_EXCL": 1,
+                    "COPYFILE_EXCL": 1,
+                    "UV_FS_COPYFILE_FICLONE": 2,
+                    "COPYFILE_FICLONE": 2,
+                    "UV_FS_COPYFILE_FICLONE_FORCE": 4,
+                    "COPYFILE_FICLONE_FORCE": 4
+                },
+                "promises": {}
+            },
+            "promises": {}
+        },
+        "EVENT_TYPE": "standard",
+        "ENDPOINT": "https://reqres.in/api/users",
+        "POST_TYPE_BODY": true,
+        "POLLING_RATE": 5000,
+        "DATA_ENDPOINT": "https://reqres.in/api/users",
+        "CONDITION": {
+            "function": {
+                "args": [
+                    "val"
+                ],
+                "body": "return true",
+                "isAsync": false
+            }
+        },
+        "OUTPUT_FILE": "..//public//Event_logs.json",
+        "POLL": {
+            "function": {
+                "args": [
+                    ""
+                ],
+                "body": "\r\n             // get <- post <- log\r\n            if(this.POLLING_RATE - this.count <= 0 && this.ENDPOINT && this.DATA_ENDPOINT ){\r\n                const GETURL = this.DATA_ENDPOINT\r\n                const POSTURL = this.ENDPOINT\r\n                this.count = 0; \r\n               await this.GET(GETURL,POSTURL,(out)=>this.POST(this.ENDPOINT,out,(data)=>this.LOG(this.OUTPUT_FILE,JSON.stringify(data,null,4))))\r\n            }else{\r\n                this.count++; \r\n            }\r\n        ",
+                "isAsync": true
+            }
+        },
+        "GET": {
+            "function": {
+                "args": [
+                    "GETURL",
+                    "POSTURL",
+                    "callback"
+                ],
+                "body": "\r\n           await this.axios.get(GETURL)\r\n           .then(val=>{\r\n               callback(this.GETPARSER(val))\r\n            })\r\n        ",
+                "isAsync": true
+            }
+        },
+        "POST": {
+            "function": {
+                "args": [
+                    "POSTURL",
+                    "PAYLOAD",
+                    "callback"
+                ],
+                "body": "\r\n            console.log('postURL')\r\n            console.log(POSTURL)\r\n            console.log('PAYLOAD')\r\n            console.log(PAYLOAD)\r\n            this.POST_TYPE_BODY ? await this.axios.post(POSTURL,PAYLOAD).then(val=>callback(this.POSTPARSER(val))):\r\n            await this.axios.post(POSTURL + PAYLOAD).then(val=>callback(this.POSTPARSER(val)))\r\n        ",
+                "isAsync": true
+            }
+        },
+        "LOG": {
+            "function": {
+                "args": [
+                    "file",
+                    "val"
+                ],
+                "body": "\r\n            if(this.CONDITION(val)){\r\n                console.log('logging');\r\n                console.log(val)\r\n                let file_data = this.fs.readFileSync(this.OUTPUT_FILE,'utf-8')\r\n                let arr = []; \r\n                if(file_data.length > 0){\r\n                    let {EVENTS} = JSON.parse(file_data) \r\n                    arr = EVENTS; \r\n                }\r\n                arr.push({Event:this.EVENT_TYPE,response:val,date:new Date()})\r\n                this.fs.writeFileSync(file,`{\"EVENTS\":${JSON.stringify(arr,null,4)}}`)\r\n            }\r\n        ",
+                "isAsync": false
+            }
+        },
+        "GETPARSER": {
+            "function": {
+                "args": [
+                    "res"
+                ],
+                "body": "\r\n        return res.data.data[0]\r\n    ",
+                "isAsync": false
+            }
+        },
+        "POSTPARSER": {
+            "function": {
+                "args": [
+                    "res"
+                ],
+                "body": "\r\n        return res.data\r\n    ",
+                "isAsync": false
+            }
+        },
+        "count": 0
+    },
+    {
+        "Child_Process": {
+            "default": {}
+        },
+        "axios": {
+            "function": {
+                "args": [
+                    ""
+                ],
+                "body": "\n    var args = new Array(arguments.length);\n    for (var i = 0; i < args.length; i++) {\n      args[i] = arguments[i];\n    }\n    return fn.apply(thisArg, args);\n  ",
+                "isAsync": false
+            }
+        },
+        "fs": {
+            "F_OK": 0,
+            "R_OK": 4,
+            "W_OK": 2,
+            "X_OK": 1,
+            "constants": {
+                "UV_FS_SYMLINK_DIR": 1,
+                "UV_FS_SYMLINK_JUNCTION": 2,
+                "O_RDONLY": 0,
+                "O_WRONLY": 1,
+                "O_RDWR": 2,
+                "UV_DIRENT_UNKNOWN": 0,
+                "UV_DIRENT_FILE": 1,
+                "UV_DIRENT_DIR": 2,
+                "UV_DIRENT_LINK": 3,
+                "UV_DIRENT_FIFO": 4,
+                "UV_DIRENT_SOCKET": 5,
+                "UV_DIRENT_CHAR": 6,
+                "UV_DIRENT_BLOCK": 7,
+                "S_IFMT": 61440,
+                "S_IFREG": 32768,
+                "S_IFDIR": 16384,
+                "S_IFCHR": 8192,
+                "S_IFLNK": 40960,
+                "O_CREAT": 256,
+                "O_EXCL": 1024,
+                "UV_FS_O_FILEMAP": 536870912,
+                "O_TRUNC": 512,
+                "O_APPEND": 8,
+                "F_OK": 0,
+                "R_OK": 4,
+                "W_OK": 2,
+                "X_OK": 1,
+                "UV_FS_COPYFILE_EXCL": 1,
+                "COPYFILE_EXCL": 1,
+                "UV_FS_COPYFILE_FICLONE": 2,
+                "COPYFILE_FICLONE": 2,
+                "UV_FS_COPYFILE_FICLONE_FORCE": 4,
+                "COPYFILE_FICLONE_FORCE": 4
+            },
+            "default": {
+                "F_OK": 0,
+                "R_OK": 4,
+                "W_OK": 2,
+                "X_OK": 1,
+                "constants": {
+                    "UV_FS_SYMLINK_DIR": 1,
+                    "UV_FS_SYMLINK_JUNCTION": 2,
+                    "O_RDONLY": 0,
+                    "O_WRONLY": 1,
+                    "O_RDWR": 2,
+                    "UV_DIRENT_UNKNOWN": 0,
+                    "UV_DIRENT_FILE": 1,
+                    "UV_DIRENT_DIR": 2,
+                    "UV_DIRENT_LINK": 3,
+                    "UV_DIRENT_FIFO": 4,
+                    "UV_DIRENT_SOCKET": 5,
+                    "UV_DIRENT_CHAR": 6,
+                    "UV_DIRENT_BLOCK": 7,
+                    "S_IFMT": 61440,
+                    "S_IFREG": 32768,
+                    "S_IFDIR": 16384,
+                    "S_IFCHR": 8192,
+                    "S_IFLNK": 40960,
+                    "O_CREAT": 256,
+                    "O_EXCL": 1024,
+                    "UV_FS_O_FILEMAP": 536870912,
+                    "O_TRUNC": 512,
+                    "O_APPEND": 8,
+                    "F_OK": 0,
+                    "R_OK": 4,
+                    "W_OK": 2,
+                    "X_OK": 1,
+                    "UV_FS_COPYFILE_EXCL": 1,
+                    "COPYFILE_EXCL": 1,
+                    "UV_FS_COPYFILE_FICLONE": 2,
+                    "COPYFILE_FICLONE": 2,
+                    "UV_FS_COPYFILE_FICLONE_FORCE": 4,
+                    "COPYFILE_FICLONE_FORCE": 4
+                },
+                "promises": {}
+            },
+            "promises": {}
+        },
+        "EVENT_TYPE": "standard",
         "ENDPOINT": null,
         "POST_TYPE_BODY": false,
         "POLLING_RATE": -1,

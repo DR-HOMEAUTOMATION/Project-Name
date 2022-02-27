@@ -2,13 +2,13 @@
     "EVENT_HANDLERS":[
         {
             "EVENT_TYPE":"TEST",
-            "PREVENT_PROP":false,
+            "PREVENT_PROP":{"function":{"args":"data","body":"return false"}},
             "SCRIPT":{"function":{"args":"a","body":"console.log('THIS EVENT IS A TEST EVENT')"}},
             "CONDITION":{"function":{"args":"a","body":"return 1"}}
         },
         {
             "EVENT_TYPE":"standard",
-            "PREVENT_PROP":false,
+            "PREVENT_PROP":{"function":{"args":"data","body":"return false"}},
             "SCRIPT":{"function":{"args":"data","body":"console.log(`\\x1b[33m`,`Standard Event Detected: \n Response: ${data}`)","isAsync":false}}
         }
     ]
