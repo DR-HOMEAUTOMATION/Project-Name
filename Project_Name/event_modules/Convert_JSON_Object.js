@@ -1,5 +1,3 @@
-import { createRequire } from "module";
-
 const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
 const parseFunctionParams = (f) => f.toString().split('(')[1].split(')')[0].split(',')
 const parseFunctionBody = (f) => f.toString().substring(f.toString().indexOf('{')+1,f.toString().lastIndexOf('}'))

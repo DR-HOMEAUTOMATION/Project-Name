@@ -43,18 +43,12 @@ async function POLL_EVENTS(EVENT_LIST){
 // CHECK if events exist, if so handle them using the array of event handlers. 
 function HANDLE_EVENTS(){
     console.log('\x1b[0m',"handling events now")
-    const data = fs.readFileSync(PATHS.EVENT_LOGS)
-    let EVENTS_DATA = []; 
-    if(data.length > 0){
-        EVENTS_DATA = JSON.parse(data).EVENTS
-    }
-    fs.writeFileSync(PATHS.EVENT_LOGS,''); 
-    for(let i of EVENTS_DATA){
-        for(let j of EVENT_HANDLERS){
-            if(i.Event == j.EVENT_TYPE){
-                if(j.CONDITION(i.response)) j.SCRIPT(i.response); 
-                if(j.PREVENT_PROP) break; 
-            }
+    const eventLogs = fs.readFileSync(PATHS.EVENT_LOGS)
+    fs.writeFileSync(PATHS.EVENT_LOGS,''); // clear the file
+    let events = eventLogs.length > 0 ? JSON.parse(eventLogs).EVENTS : []
+    for(let event of events){ // loop through all events
+        for(let eventHandler of EVENT_HANDLERS){ // check all event handlers against each event 
+            if(eventHandler.check(event)) break; // the handler will deal with calling the script, and will return true if the loop should prevent propagation
         }
     } 
 }
