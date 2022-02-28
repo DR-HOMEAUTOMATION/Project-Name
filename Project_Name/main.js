@@ -25,8 +25,11 @@ function GetEventList(file){
     return EVENTS; 
 }
 function GetEventHandlerList(file){
+    console.log(`Path: ${file}`)
     let JSON_DATA = fs.readFileSync(file); 
+    console.log(JSON_DATA)
     let {EVENT_HANDLERS} = JSON.parse(JSON_DATA);
+    console.log(`event handler raw: ${EVENT_HANDLERS}`)
     EVENT_HANDLERS = EVENT_HANDLERS.map(val=>convertJsonToJs(val)); 
     EVENT_HANDLERS = EVENT_HANDLERS.map(val=> new Event_Handler(val)); 
     return EVENT_HANDLERS; 
@@ -65,19 +68,32 @@ function createEventAt(file,event){
     fs.writeFileSync(file,`{"EVENTS":${JSON.stringify(arr,null,4)}}`)
 }
 
-//test Event & event handlers | the default `standard` evt_handler works fine
-createEventAt(PATHS.EVENTS,new Event({
-    ENDPOINT: "https://reqres.in/api/users",
-    DATA_ENDPOINT: "https://reqres.in/api/users",
-    POLLING_RATE:5000,
-    POST_TYPE_BODY:true,
-    GETPARSER: (res)=>{
-        return res.data.data[0]
-    },
-    POSTPARSER:(res)=>{
-        return res.data
+function createEventHandlerAt(file,eventHandler){
+    let file_data = fs.readFileSync(file,'utf-8')
+    let arr = []; 
+    if(file_data.length > 0){
+        let {EVENT_HANDLERS} = JSON.parse(file_data) 
+        arr = EVENT_HANDLERS; 
     }
-}))
+    arr.unshift(convertJsToJson(eventHandler))
+    fs.writeFileSync(file,`{"EVENT_HANDLERS":${JSON.stringify(arr,null,4)}}`)
+}
+
+//test Event & event handlers | the default `standard` evt_handler works fine
+// createEventAt(PATHS.EVENTS,new Event({
+//     ENDPOINT: "https://reqres.in/api/users",
+//     DATA_ENDPOINT: "https://reqres.in/api/users",
+//     POLLING_RATE:5000,
+//     POST_TYPE_BODY:true,
+//     GETPARSER: (res)=>{
+//         return res.data.data[0]
+//     },
+//     POSTPARSER:(res)=>{
+//         return res.data
+//     }
+// }))
+
+// createEventHandlerAt(PATHS.EVENT_HANDLERS,new Event_Handler())
 
 EVENTS = GetEventList(PATHS.EVENTS)
 EVENT_HANDLERS = GetEventHandlerList(PATHS.EVENT_HANDLERS)

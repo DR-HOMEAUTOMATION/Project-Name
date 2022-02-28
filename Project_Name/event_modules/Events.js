@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import axios from 'axios';
 import { createRequire } from "module";
-import * as Child_Process from 'child_process'
+import * as child_process from 'child_process'
 const require = createRequire(import.meta.url);
 const PATHS = require('../paths.json');
 class Event{
@@ -58,7 +58,7 @@ class Event{
         }
     }={}
     ){        
-        this.Child_Process = Child_Process
+        this.child_process = child_process
         this.axios = axios
         this.fs = fs; 
         this.EVENT_TYPE = EVENT_TYPE
