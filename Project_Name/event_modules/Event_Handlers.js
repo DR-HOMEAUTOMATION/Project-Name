@@ -1,15 +1,18 @@
+import * as child_process from 'child_process'
+
 // the script will have access to the child_process for executing alternate files/scripts 
 class Event_Handler{
     constructor(
         {   // default values
             EVENT_TYPE='standard',
-            PREVENT_PROP=(val)=>false,
-            CONDITION=(val)=>true,
+            PREVENT_PROP=function(val){return false},
+            CONDITION=function(val){return true},
             SCRIPT=function(data){
                 console.log(`Event Detected: ${data}`)
             }
-        })
+        }={})
         {
+        this.child_process = child_process
         this.EVENT_TYPE = EVENT_TYPE;
         this.CONDITION = CONDITION;
         this.SCRIPT = SCRIPT; 
